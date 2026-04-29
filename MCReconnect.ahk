@@ -93,7 +93,12 @@ Gui, Main:Add, Text,     x86  y178 w48,  Y (rel)
 Gui, Main:Add, Text,     x138 y178 w90,  Color (0xRRGGBB)
 Gui, Main:Add, Text,     x232 y178 w50,  Tolerance
 Gui, Main:Add, Text,     x285 y178 w110, Actions
-Gui, Main:Add, Text,     x400 y178 w28,  On
+Gui, Main:Add, Text, x400 y178 w28, On
+Gui, Main:Add, CheckBox, x400 y199 w24 vDetEnable1 gEvt_DetEn1 Checked,
+Gui, Main:Add, CheckBox, x400 y223 w24 vDetEnable2 gEvt_DetEn2,
+Gui, Main:Add, CheckBox, x400 y247 w24 vDetEnable3 gEvt_DetEn3,
+Gui, Main:Add, CheckBox, x400 y271 w24 vDetEnable4 gEvt_DetEn4,
+Gui, Main:Add, CheckBox, x400 y295 w24 vDetEnable5 gEvt_DetEn5,
 
 Loop 5 {
     row := A_Index
@@ -105,8 +110,6 @@ Loop 5 {
     Gui, Main:Add, Edit,     x232 y%yy% w46   vDetTol%row%,   10
     Gui, Main:Add, Button,   x282 y%yy% w58   gBtn_DetWiz%row%, Capture
     Gui, Main:Add, Button,   x344 y%yy% w52   gBtn_DetTest%row%, Test
-    chk := (row = 1) ? "Checked" : ""
-    Gui, Main:Add, CheckBox, x400 y%yy% w24   vDetEnable%row% %chk%,
 }
 
 ; --- Reconnect Flow Steps ---
@@ -128,9 +131,17 @@ Loop 8 {
     Gui, Main:Add, Edit,          x164 y%yy% w48   vStepY%row%,    0
     Gui, Main:Add, Edit,          x216 y%yy% w84   vStepWait%row%, 500
     Gui, Main:Add, Button,        x304 y%yy% w58   gBtn_StepWiz%row%, Capture
-    chk := (row <= 3) ? "Checked" : ""
-    Gui, Main:Add, CheckBox,      x366 y%yy% w24   vStepEnable%row% %chk%,
 }
+; Step row checkboxes (outside loop for literal g-labels)
+Gui, Main:Add, Text,     x366 y360 w28, On
+Gui, Main:Add, CheckBox, x366 y381 w24 vStepEnable1 gEvt_StepEn1 Checked,
+Gui, Main:Add, CheckBox, x366 y405 w24 vStepEnable2 gEvt_StepEn2 Checked,
+Gui, Main:Add, CheckBox, x366 y429 w24 vStepEnable3 gEvt_StepEn3 Checked,
+Gui, Main:Add, CheckBox, x366 y453 w24 vStepEnable4 gEvt_StepEn4,
+Gui, Main:Add, CheckBox, x366 y477 w24 vStepEnable5 gEvt_StepEn5,
+Gui, Main:Add, CheckBox, x366 y501 w24 vStepEnable6 gEvt_StepEn6,
+Gui, Main:Add, CheckBox, x366 y525 w24 vStepEnable7 gEvt_StepEn7,
+Gui, Main:Add, CheckBox, x366 y549 w24 vStepEnable8 gEvt_StepEn8,
 ; Set default dropdown selections (row 1 = Click, rows 2-3 = DblClick)
 GuiControl, Main:Choose, StepType1, 1
 GuiControl, Main:Choose, StepType2, 2
@@ -139,14 +150,14 @@ GuiControl, Main:Choose, StepType3, 2
 ; --- Timing ---
 Gui, Main:Add, GroupBox, x8 y574 w460 h88, Timing
 Gui, Main:Add, Text,     x16 y591 w132, Reconnect Delay (ms):
-Gui, Main:Add, Edit,     x150 y589 w80  vCtrl_ReconnDelay,    5000
-Gui, Main:Add, CheckBox, x240 y591      vCtrl_ReconnVarOn Checked, Variance (ms):
+Gui, Main:Add, Edit,     x150 y589 w80  vCtrl_ReconnDelay, 5000
+Gui, Main:Add, CheckBox, x240 y591      vCtrl_ReconnVarOn gEvt_ReconnVarOn Checked, Variance (ms):
 Gui, Main:Add, Edit,     x340 y589 w80  vCtrl_ReconnVariance, 2000
 
 Gui, Main:Add, Text,     x16 y617 w132, Total Runtime (ms):
-Gui, Main:Add, Edit,     x150 y615 w80  vCtrl_TotalTime,      0
+Gui, Main:Add, Edit,     x150 y615 w80  vCtrl_TotalTime gEvt_TotalTimeChanged, 0
 Gui, Main:Add, Text,     x240 y617 w100 cGray, (0 = run forever)
-Gui, Main:Add, CheckBox, x345 y617      vCtrl_TotalVarOn Checked, Variance (ms):
+Gui, Main:Add, CheckBox, x345 y617      vCtrl_TotalVarOn gEvt_TotalVarOn Checked, Variance (ms):
 
 Gui, Main:Add, Text,     x16 y641 w132, Total Variance (ms):
 Gui, Main:Add, Edit,     x150 y639 w80  vCtrl_TotalVariance,  60000
@@ -159,6 +170,23 @@ GuiControl, Main:Disable, Btn_Stop
 Gui, Main:Add, Text,     x232 y690 w232 vCtrl_Status cGray, Status: Idle
 
 Gui, Main:Show, w478 h730, MCReconnect - Minecraft Auto-Reconnector
+
+; Initial grey-out state for unchecked rows
+; Detection rows 2-5 start disabled (checkbox unchecked)
+Loop 5 {
+    if (A_Index > 1)
+        ToggleDetRow(A_Index)
+}
+; Step rows 4-8 start disabled
+Loop 8 {
+    if (A_Index > 3)
+        ToggleStepRow(A_Index)
+}
+; Reconnect Variance: checkbox starts checked, explicitly enable its edit field
+GuiControl, Main:Enable, Ctrl_ReconnVariance
+; Total Time starts at 0, so variance controls are greyed out
+GuiControl, Main:Disable, Ctrl_TotalVarOn
+GuiControl, Main:Disable, Ctrl_TotalVariance
 return
 
 ; ============================================================
@@ -624,6 +652,121 @@ ColorMatch(actual, expected, tolerance) {
 
 SetStatus(msg) {
     GuiControl, Main:, Ctrl_Status, %msg%
+}
+
+; ============================================================
+;  CHECKBOX / EDIT CHANGE HANDLERS
+; ============================================================
+
+; --- Reconnect Variance toggle ---
+Evt_ReconnVarOn:
+    GuiControlGet, state, Main:, Ctrl_ReconnVarOn
+    if (state)
+        GuiControl, Main:Enable,  Ctrl_ReconnVariance
+    else
+        GuiControl, Main:Disable, Ctrl_ReconnVariance
+return
+
+; --- Total Time change: grey out variance controls when 0 ---
+Evt_TotalTimeChanged:
+    GuiControlGet, val, Main:, Ctrl_TotalTime
+    if (val = "" or val = 0) {
+        GuiControl, Main:Disable, Ctrl_TotalVarOn
+        GuiControl, Main:Disable, Ctrl_TotalVariance
+        GuiControl, Main:, Ctrl_TotalVarOn, 0
+    } else {
+        GuiControl, Main:Enable, Ctrl_TotalVarOn
+        GuiControl, Main:, Ctrl_TotalVarOn, 1
+        GuiControl, Main:Enable, Ctrl_TotalVariance
+    }
+return
+
+; --- Total Variance toggle ---
+Evt_TotalVarOn:
+    GuiControlGet, state, Main:, Ctrl_TotalVarOn
+    if (state)
+        GuiControl, Main:Enable,  Ctrl_TotalVariance
+    else
+        GuiControl, Main:Disable, Ctrl_TotalVariance
+return
+
+; --- Detection row checkbox handlers ---
+Evt_DetEn1:
+    ToggleDetRow(1)
+return
+Evt_DetEn2:
+    ToggleDetRow(2)
+return
+Evt_DetEn3:
+    ToggleDetRow(3)
+return
+Evt_DetEn4:
+    ToggleDetRow(4)
+return
+Evt_DetEn5:
+    ToggleDetRow(5)
+return
+
+; --- Step row checkbox handlers ---
+Evt_StepEn1:
+    ToggleStepRow(1)
+return
+Evt_StepEn2:
+    ToggleStepRow(2)
+return
+Evt_StepEn3:
+    ToggleStepRow(3)
+return
+Evt_StepEn4:
+    ToggleStepRow(4)
+return
+Evt_StepEn5:
+    ToggleStepRow(5)
+return
+Evt_StepEn6:
+    ToggleStepRow(6)
+return
+Evt_StepEn7:
+    ToggleStepRow(7)
+return
+Evt_StepEn8:
+    ToggleStepRow(8)
+return
+
+ToggleDetRow(row) {
+    GuiControlGet, state, Main:, DetEnable%row%
+    if (state) {
+        GuiControl, Main:Enable,  DetX%row%
+        GuiControl, Main:Enable,  DetY%row%
+        GuiControl, Main:Enable,  DetColor%row%
+        GuiControl, Main:Enable,  DetTol%row%
+        GuiControl, Main:Enable,  Btn_DetWiz%row%
+        GuiControl, Main:Enable,  Btn_DetTest%row%
+    } else {
+        GuiControl, Main:Disable, DetX%row%
+        GuiControl, Main:Disable, DetY%row%
+        GuiControl, Main:Disable, DetColor%row%
+        GuiControl, Main:Disable, DetTol%row%
+        GuiControl, Main:Disable, Btn_DetWiz%row%
+        GuiControl, Main:Disable, Btn_DetTest%row%
+    }
+}
+
+ToggleStepRow(row) {
+    GuiControlGet, state, Main:, StepEnable%row%
+    if (state) {
+        GuiControl, Main:Enable,  StepType%row%
+        GuiControl, Main:Enable,  StepX%row%
+        GuiControl, Main:Enable,  StepY%row%
+        GuiControl, Main:Enable,  StepWait%row%
+        GuiControl, Main:Enable,  Btn_StepWiz%row%
+    } else {
+        GuiControl, Main:Disable, StepType%row%
+        GuiControl, Main:Disable, StepX%row%
+        GuiControl, Main:Disable, StepY%row%
+        GuiControl, Main:Disable, StepWait%row%
+        GuiControl, Main:Disable, Btn_StepWiz%row%
+    }
 }
 
 ; ============================================================
