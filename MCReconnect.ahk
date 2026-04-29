@@ -66,110 +66,114 @@ Gui, Main:+LastFound
 Gui, Main:Font, s9, Segoe UI
 
 ; --- Process ---
-Gui, Main:Add, GroupBox, x8 y5 w460 h52, Process
-Gui, Main:Add, Text,     x16 y24 w60,    Process:
-Gui, Main:Add, Edit,     x75 y22 w285    vCtrl_ProcessName,
-Gui, Main:Add, Button,   x364 y20 w96    gBtn_PickProcess, Pick Process...
+Gui, Main:Add, GroupBox, x8 y15 w460 h52, Process
+Gui, Main:Add, Text,     x16 y34 w60,    Process:
+Gui, Main:Add, Edit,     x75 y32 w285    vCtrl_ProcessName,
+Gui, Main:Add, Button,   x364 y30 w96    gBtn_PickProcess, Pick Process...
 
 ; --- Window Mode ---
-Gui, Main:Add, GroupBox, x8 y60 w460 h52, Window Mode
-Gui, Main:Add, Text,     x16 y78, Mode:
-Gui, Main:Add, Radio,    x52 y77 vCtrl_WinWindowed   gEvt_WinMode +Group Checked, Windowed
-Gui, Main:Add, Radio,    x135 y77 vCtrl_WinBorderless gEvt_WinMode,               Borderless
-Gui, Main:Add, Radio,    x217 y77 vCtrl_WinFullscreen gEvt_WinMode,               Fullscreen (unreliable)
-Gui, Main:Add, Text,     x16 y94 w450 cRed vCtrl_FullscreenWarn +Hidden, ! AHK pixel functions are unreliable in exclusive fullscreen. Use Windowed or Borderless.
+Gui, Main:Add, GroupBox, x8 y78 w460 h46, Window Mode
+Gui, Main:Add, Text,     x16 y97, Mode:
+Gui, Main:Add, Radio,    x56 y97 vCtrl_WinWindowed   gEvt_WinMode +Group Checked, Windowed
+Gui, Main:Add, Radio,    x142 y97 vCtrl_WinBorderless gEvt_WinMode,               Borderless
+Gui, Main:Add, Radio,    x226 y97 vCtrl_WinFullscreen gEvt_WinMode,               Fullscreen (unreliable)
+Gui, Main:Add, Text,     x16 y112 w450 cRed vCtrl_FullscreenWarn +Hidden, ! AHK pixel functions are unreliable in exclusive fullscreen. Use Windowed or Borderless.
 
 ; --- Wizard Hotkey ---
-Gui, Main:Add, GroupBox, x8 y115 w460 h42, Wizard Capture Hotkey
-Gui, Main:Add, Text,     x16 y132, Hotkey:
-Gui, Main:Add, Edit,     x62 y130 w70 vCtrl_WizardHotkey, F8
-Gui, Main:Add, Text,     x140 y124 w325 cGray, (While wizard is active: hover over the pixel/button and press this key)
+Gui, Main:Add, GroupBox, x8 y135 w460 h48, Wizard Capture Hotkey
+Gui, Main:Add, Text,     x16 y152, Hotkey:
+Gui, Main:Add, Edit,     x62 y150 w70 vCtrl_WizardHotkey, F8
+Gui, Main:Add, Text,     x140 y145 w325 cGray, (While wizard is active: hover over the pixel/button and press this key)
 
 ; --- Kick Detection ---
-Gui, Main:Add, GroupBox, x8 y160 w460 h178, Kick Detection  [AND gate - all enabled rows must match]
-Gui, Main:Add, Text,     x14  y178 w18,  #
-Gui, Main:Add, Text,     x34  y178 w48,  X (rel)
-Gui, Main:Add, Text,     x86  y178 w48,  Y (rel)
-Gui, Main:Add, Text,     x138 y178 w90,  Color (0xRRGGBB)
-Gui, Main:Add, Text,     x232 y178 w50,  Tolerance
-Gui, Main:Add, Text,     x285 y178 w110, Actions
-Gui, Main:Add, Text, x400 y178 w28, On
-Gui, Main:Add, CheckBox, x400 y199 w24 vDetEnable1 gEvt_DetEn1 Checked,
-Gui, Main:Add, CheckBox, x400 y223 w24 vDetEnable2 gEvt_DetEn2,
-Gui, Main:Add, CheckBox, x400 y247 w24 vDetEnable3 gEvt_DetEn3,
-Gui, Main:Add, CheckBox, x400 y271 w24 vDetEnable4 gEvt_DetEn4,
-Gui, Main:Add, CheckBox, x400 y295 w24 vDetEnable5 gEvt_DetEn5,
+Gui, Main:Add, GroupBox, x8 y194 w460 h169, Kick Detection (AND gate - all enabled rows must match)
+Gui, Main:Add, Text,     x14  y211 w18,  #
+Gui, Main:Add, Text,     x34  y211 w48,  X (rel)
+Gui, Main:Add, Text,     x86  y211 w48,  Y (rel)
+Gui, Main:Add, Text,     x138 y211 w90,  Color
+Gui, Main:Add, Text,     x232 y211 w50,  Tolerance
+Gui, Main:Add, Text,     x285 y211 w110, Actions
+Gui, Main:Add, Text, x400 y211 w28, On
+Gui, Main:Add, CheckBox, x400 y239 w24 vDetEnable1 gEvt_DetEn1 Checked,
+Gui, Main:Add, CheckBox, x400 y263 w24 vDetEnable2 gEvt_DetEn2,
+Gui, Main:Add, CheckBox, x400 y287 w24 vDetEnable3 gEvt_DetEn3,
+Gui, Main:Add, CheckBox, x400 y311 w24 vDetEnable4 gEvt_DetEn4,
+Gui, Main:Add, CheckBox, x400 y335 w24 vDetEnable5 gEvt_DetEn5,
 
 Loop 5 {
     row := A_Index
-    yy  := 175 + (row * 24)
-    Gui, Main:Add, Text,     x14  y%yy% w18,  %row%
-    Gui, Main:Add, Edit,     x34  y%yy% w48   vDetX%row%,     0
-    Gui, Main:Add, Edit,     x86  y%yy% w48   vDetY%row%,     0
-    Gui, Main:Add, Edit,     x138 y%yy% w90   vDetColor%row%, 0xFFFFFF
-    Gui, Main:Add, Edit,     x232 y%yy% w46   vDetTol%row%,   10
-    Gui, Main:Add, Button,   x282 y%yy% w58   gBtn_DetWiz%row%, Capture
-    Gui, Main:Add, Button,   x344 y%yy% w52   gBtn_DetTest%row%, Test
+    rowBase := 212 + (row * 24)
+    numBase := 216 + (row * 24)
+    Gui, Main:Add, Text,     x14  y%numBase% w18,  %row%
+    Gui, Main:Add, Edit,     x34  y%rowBase% w48   vDetX%row%,     0
+    Gui, Main:Add, Edit,     x86  y%rowBase% w48   vDetY%row%,     0
+    Gui, Main:Add, Edit,     x138 y%rowBase% w90   vDetColor%row%, 0xFFFFFF
+    Gui, Main:Add, Edit,     x232 y%rowBase% w46   vDetTol%row%,   10
+    btnBase := 210 + (row * 24)
+    Gui, Main:Add, Button,   x282 y%btnBase% w58   gBtn_DetWiz%row%, Capture
+    Gui, Main:Add, Button,   x344 y%btnBase% w52   gBtn_DetTest%row%, Test
 }
 
 ; --- Reconnect Flow Steps ---
-Gui, Main:Add, GroupBox, x8 y342 w460 h228, Reconnect Flow Steps
-Gui, Main:Add, Text,     x14  y360 w18,  #
-Gui, Main:Add, Text,     x34  y360 w74,  Action
-Gui, Main:Add, Text,     x112 y360 w48,  X (rel)
-Gui, Main:Add, Text,     x164 y360 w48,  Y (rel)
-Gui, Main:Add, Text,     x216 y360 w84,  Wait After (ms)
-Gui, Main:Add, Text,     x304 y360 w58,  Capture
-Gui, Main:Add, Text,     x366 y360 w28,  On
+Gui, Main:Add, GroupBox, x8 y373 w460 h241, Reconnect Flow Steps
+Gui, Main:Add, Text,     x14  y391 w18,  #
+Gui, Main:Add, Text,     x34  y391 w74,  Action
+Gui, Main:Add, Text,     x112 y391 w48,  X (rel)
+Gui, Main:Add, Text,     x164 y391 w48,  Y (rel)
+Gui, Main:Add, Text,     x216 y391 w84,  Wait After (ms)
+Gui, Main:Add, Text,     x304 y391 w58,  Capture
+Gui, Main:Add, Text,     x366 y391 w28,  On
 
 Loop 8 {
     row := A_Index
-    yy  := 357 + (row * 24)
-    Gui, Main:Add, Text,          x14  y%yy% w18,  %row%
-    Gui, Main:Add, DropDownList,  x34  y%yy% w74   vStepType%row%, Click||DblClick|Wait
-    Gui, Main:Add, Edit,          x112 y%yy% w48   vStepX%row%,    0
-    Gui, Main:Add, Edit,          x164 y%yy% w48   vStepY%row%,    0
-    Gui, Main:Add, Edit,          x216 y%yy% w84   vStepWait%row%, 500
-    Gui, Main:Add, Button,        x304 y%yy% w58   gBtn_StepWiz%row%, Capture
+    rowBase := 391 + (row * 24)
+    numBase := 395 + (row * 24)
+    Gui, Main:Add, Text,          x14  y%numBase% w18,  %row%
+    Gui, Main:Add, DropDownList,  x34  y%rowBase% w74   vStepType%row%, Click||DblClick|Wait
+    Gui, Main:Add, Edit,          x112 y%rowBase% w48   vStepX%row%,    0
+    Gui, Main:Add, Edit,          x164 y%rowBase% w48   vStepY%row%,    0
+    Gui, Main:Add, Edit,          x216 y%rowBase% w84   vStepWait%row%, 500
+    btnBase := 389 + (row * 24)
+    Gui, Main:Add, Button,        x304 y%btnBase% w58   gBtn_StepWiz%row%, Capture
 }
 ; Step row checkboxes (outside loop for literal g-labels)
-Gui, Main:Add, Text,     x366 y360 w28, On
-Gui, Main:Add, CheckBox, x366 y381 w24 vStepEnable1 gEvt_StepEn1 Checked,
-Gui, Main:Add, CheckBox, x366 y405 w24 vStepEnable2 gEvt_StepEn2 Checked,
-Gui, Main:Add, CheckBox, x366 y429 w24 vStepEnable3 gEvt_StepEn3 Checked,
-Gui, Main:Add, CheckBox, x366 y453 w24 vStepEnable4 gEvt_StepEn4,
-Gui, Main:Add, CheckBox, x366 y477 w24 vStepEnable5 gEvt_StepEn5,
-Gui, Main:Add, CheckBox, x366 y501 w24 vStepEnable6 gEvt_StepEn6,
-Gui, Main:Add, CheckBox, x366 y525 w24 vStepEnable7 gEvt_StepEn7,
-Gui, Main:Add, CheckBox, x366 y549 w24 vStepEnable8 gEvt_StepEn8,
+Gui, Main:Add, Text,     x366 y391 w28, On
+Gui, Main:Add, CheckBox, x366 y419 w24 vStepEnable1 gEvt_StepEn1 Checked,
+Gui, Main:Add, CheckBox, x366 y443 w24 vStepEnable2 gEvt_StepEn2 Checked,
+Gui, Main:Add, CheckBox, x366 y467 w24 vStepEnable3 gEvt_StepEn3 Checked,
+Gui, Main:Add, CheckBox, x366 y491 w24 vStepEnable4 gEvt_StepEn4,
+Gui, Main:Add, CheckBox, x366 y515 w24 vStepEnable5 gEvt_StepEn5,
+Gui, Main:Add, CheckBox, x366 y539 w24 vStepEnable6 gEvt_StepEn6,
+Gui, Main:Add, CheckBox, x366 y563 w24 vStepEnable7 gEvt_StepEn7,
+Gui, Main:Add, CheckBox, x366 y587 w24 vStepEnable8 gEvt_StepEn8,
 ; Set default dropdown selections (row 1 = Click, rows 2-3 = DblClick)
 GuiControl, Main:Choose, StepType1, 1
 GuiControl, Main:Choose, StepType2, 2
 GuiControl, Main:Choose, StepType3, 2
 
 ; --- Timing ---
-Gui, Main:Add, GroupBox, x8 y574 w460 h88, Timing
-Gui, Main:Add, Text,     x16 y591 w132, Reconnect Delay (ms):
-Gui, Main:Add, Edit,     x150 y589 w80  vCtrl_ReconnDelay, 5000
-Gui, Main:Add, CheckBox, x240 y591      vCtrl_ReconnVarOn gEvt_ReconnVarOn Checked, Variance (ms):
-Gui, Main:Add, Edit,     x340 y589 w80  vCtrl_ReconnVariance, 2000
+Gui, Main:Add, GroupBox, x8 y625 w460 h96, Timing
+Gui, Main:Add, Text,     x16 y642 w132, Reconnect Delay (ms):
+Gui, Main:Add, Edit,     x150 y640 w80  vCtrl_ReconnDelay, 5000
+Gui, Main:Add, CheckBox, x240 y642      vCtrl_ReconnVarOn gEvt_ReconnVarOn Checked, Variance (ms):
+Gui, Main:Add, Edit,     x340 y640 w80  vCtrl_ReconnVariance, 2000
 
-Gui, Main:Add, Text,     x16 y617 w132, Total Runtime (ms):
-Gui, Main:Add, Edit,     x150 y615 w80  vCtrl_TotalTime gEvt_TotalTimeChanged, 0
-Gui, Main:Add, Text,     x240 y617 w100 cGray, (0 = run forever)
-Gui, Main:Add, CheckBox, x345 y617      vCtrl_TotalVarOn gEvt_TotalVarOn Checked, Variance (ms):
+Gui, Main:Add, Text,     x16 y668 w132, Total Runtime (ms):
+Gui, Main:Add, Edit,     x150 y666 w80  vCtrl_TotalTime gEvt_TotalTimeChanged, 0
+Gui, Main:Add, Text,     x240 y668 w100 cGray, (0 = run forever)
+Gui, Main:Add, CheckBox, x345 y668      vCtrl_TotalVarOn gEvt_TotalVarOn Checked, Variance (ms):
 
-Gui, Main:Add, Text,     x16 y641 w132, Total Variance (ms):
-Gui, Main:Add, Edit,     x150 y639 w80  vCtrl_TotalVariance,  60000
+Gui, Main:Add, Text,     x16 y692 w132, Total Variance (ms):
+Gui, Main:Add, Edit,     x150 y690 w80  vCtrl_TotalVariance,  60000
 
 ; --- Control ---
-Gui, Main:Add, GroupBox, x8 y666 w460 h58, Control
-Gui, Main:Add, Button,   x16 y682 w100 h34 gBtn_Play,  Play
-Gui, Main:Add, Button,   x122 y682 w100 h34 gBtn_Stop, Stop
+Gui, Main:Add, GroupBox, x8 y731 w460 h58, Control
+Gui, Main:Add, Button,   x16 y747 w100 h34 gBtn_Play,  Play
+Gui, Main:Add, Button,   x122 y747 w100 h34 gBtn_Stop, Stop
 GuiControl, Main:Disable, Btn_Stop
-Gui, Main:Add, Text,     x232 y690 w232 vCtrl_Status cGray, Status: Idle
+Gui, Main:Add, Text,     x232 y755 w232 vCtrl_Status cGray, Status: Idle
 
-Gui, Main:Show, w478 h730, MCReconnect - Minecraft Auto-Reconnector
+Gui, Main:Show, w478 h820, MCReconnect - Minecraft Auto-Reconnector
 
 ; Initial grey-out state for unchecked rows
 ; Detection rows 2-5 start disabled (checkbox unchecked)
