@@ -75,15 +75,15 @@ Gui, Main:Add, Button,   x364 y20 w96    gBtn_PickProcess, Pick Process...
 Gui, Main:Add, GroupBox, x8 y60 w460 h52, Window Mode
 Gui, Main:Add, Text,     x16 y78, Mode:
 Gui, Main:Add, Radio,    x52 y77 vCtrl_WinWindowed   gEvt_WinMode +Group Checked, Windowed
-Gui, Main:Add, Radio,    x125 y77 vCtrl_WinBorderless gEvt_WinMode,               Borderless
-Gui, Main:Add, Radio,    x210 y77 vCtrl_WinFullscreen gEvt_WinMode,               Fullscreen (unreliable)
+Gui, Main:Add, Radio,    x135 y77 vCtrl_WinBorderless gEvt_WinMode,               Borderless
+Gui, Main:Add, Radio,    x217 y77 vCtrl_WinFullscreen gEvt_WinMode,               Fullscreen (unreliable)
 Gui, Main:Add, Text,     x16 y94 w450 cRed vCtrl_FullscreenWarn +Hidden, ! AHK pixel functions are unreliable in exclusive fullscreen. Use Windowed or Borderless.
 
 ; --- Wizard Hotkey ---
 Gui, Main:Add, GroupBox, x8 y115 w460 h42, Wizard Capture Hotkey
 Gui, Main:Add, Text,     x16 y132, Hotkey:
 Gui, Main:Add, Edit,     x62 y130 w70 vCtrl_WizardHotkey, F8
-Gui, Main:Add, Text,     x140 y132 w325 cGray, (While wizard is active: hover over the pixel/button and press this key)
+Gui, Main:Add, Text,     x140 y124 w325 cGray, (While wizard is active: hover over the pixel/button and press this key)
 
 ; --- Kick Detection ---
 Gui, Main:Add, GroupBox, x8 y160 w460 h178, Kick Detection  [AND gate - all enabled rows must match]
