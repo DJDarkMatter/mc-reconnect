@@ -214,6 +214,7 @@ return
 ;  PROCESS PICKER
 ; ============================================================
 Btn_PickProcess:
+    Gui, Picker:Destroy
     WinGet, winList, List
     g_PickerList := []
     seen := {}
@@ -230,18 +231,20 @@ Btn_PickProcess:
         g_PickerList.Push({proc: wproc, title: wtitle})
     }
 
-    Gui, Picker:+AlwaysOnTop
+    Gui, Picker:New, +AlwaysOnTop, Select Process
     Gui, Picker:Font, s9, Segoe UI
     Gui, Picker:Add, Text, x8 y8, Select the Minecraft game window:
     Gui, Picker:Add, ListView, x8 y26 w500 h340 vPickerLV gPickerDblClick +LV0x1, Process Name|Window Title
-    Loop % g_PickerList.Length() {
-        item := g_PickerList[A_Index]
-        LV_Add("", item.proc, item.title)
+    Gui, Picker:Add, Button, x8   y374 w80 gBtn_PickerOK,     OK
+    Gui, Picker:Add, Button, x96  y374 w80 gBtn_PickerCancel, Cancel
+    listLen := g_PickerList.Length()
+    Loop %listLen% {
+        proc := g_PickerList[A_Index].proc
+        title := g_PickerList[A_Index].title
+        LV_Add("", proc, title)
     }
     LV_ModifyCol(1, 140)
     LV_ModifyCol(2, 340)
-    Gui, Picker:Add, Button, x8   y374 w80 gBtn_PickerOK,     OK
-    Gui, Picker:Add, Button, x96  y374 w80 gBtn_PickerCancel, Cancel
     Gui, Picker:Show, w520 h408, Select Process
 return
 
@@ -251,10 +254,8 @@ return
 
 Btn_PickerOK:
     row := LV_GetNext(0, "Focused")
-    if (row < 1) {
-        MsgBox, 48, No Selection, Please click a row to select it first.
+    if (row < 1)
         return
-    }
     item := g_PickerList[row]
     g_ProcessName := item.proc
     GuiControl, Main:, Ctrl_ProcessName, % item.proc
